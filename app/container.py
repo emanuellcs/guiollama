@@ -1,9 +1,12 @@
 import logging
 from typing import Optional
 
-from domain.ports import LLMClient
+from adapters.chat_repository import SqlAlchemyChatRepository
+from adapters.ollama_client import OllamaClient
+from domain.ports import ChatRepository, LLMClient
 from infra.config import Settings, get_settings
 from infra.logging import configure_logging
+from services.chat_services import ChatService
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +21,8 @@ class Container:
     def __init__(self) -> None:
         self._settings: Optional[Settings] = None
         self._llm_client: Optional[LLMClient] = None
+        self._chat_repo: Optional[ChatRepository] = None
+        self._chat_service: Optional[ChatService] = None
 
     @property
     def settings(self) -> Settings:
@@ -30,12 +35,23 @@ class Container:
     @property
     def llm_client(self) -> LLMClient:
         if self._llm_client is None:
-            raise RuntimeError("LLM Client not initialized. Call register_adapter first.")
+            # Auto-register default adapter
+            self._llm_client = OllamaClient(
+                base_url=self.settings.OLLAMA_BASE_URL, timeout=self.settings.OLLAMA_TIMEOUT
+            )
         return self._llm_client
 
-    def register_llm_client(self, client: LLMClient) -> None:
-        self._llm_client = client
-        logger.info(f"Registered LLM Client: {client.__class__.__name__}")
+    @property
+    def chat_repo(self) -> ChatRepository:
+        if self._chat_repo is None:
+            self._chat_repo = SqlAlchemyChatRepository()
+        return self._chat_repo
+
+    @property
+    def chat_service(self) -> ChatService:
+        if self._chat_service is None:
+            self._chat_service = ChatService(llm_client=self.llm_client, chat_repo=self.chat_repo)
+        return self._chat_service
 
 
 # Global container instance
