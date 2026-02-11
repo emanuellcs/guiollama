@@ -1,6 +1,6 @@
 from typing import AsyncIterator, List, Protocol, runtime_checkable
 
-from guiollama.domain.entities import Message, ModelInfo
+from domain.entities import Message, ModelInfo
 
 
 @runtime_checkable

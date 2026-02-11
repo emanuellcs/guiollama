@@ -1,9 +1,9 @@
 import logging
 from typing import Optional
 
-from guiollama.domain.ports import LLMClient
-from guiollama.infra.config import Settings, get_settings
-from guiollama.infra.logging import configure_logging
+from domain.ports import LLMClient
+from infra.config import Settings, get_settings
+from infra.logging import configure_logging
 
 logger = logging.getLogger(__name__)
 

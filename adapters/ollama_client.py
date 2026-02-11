@@ -5,9 +5,9 @@ from typing import Any, AsyncIterator, Dict, List, Optional
 
 import httpx
 
-from guiollama.domain.entities import Message, ModelInfo
-from guiollama.domain.exceptions import LLMConnectionError, LLMException
-from guiollama.domain.ports import LLMClient
+from domain.entities import Message, ModelInfo
+from domain.exceptions import LLMConnectionError, LLMException
+from domain.ports import LLMClient
 
 logger = logging.getLogger(__name__)
 
